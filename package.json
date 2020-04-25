@@ -1,0 +1,16 @@
+{
+  "name": "unoapp",
+  "version": "1.0.0",
+  "description": "Uno en ligne",
+  "main": "index.js",
+  "scripts": {
+    "devStart": "nodemon uno.js"
+  },
+  "author": "Guillaume HEIN",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.3",
+    "socket.io": "^2.3.0"
+  }
+}

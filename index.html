@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Uno</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="description" content="Demo project">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Load required Bootstrap and BootstrapVue CSS -->
+  <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+  <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+
+  <!-- Load polyfills to support older browsers -->
+  <script src="//polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver" crossorigin="anonymous">
+  </script>
+
+  <!-- Load Vue followed by BootstrapVue -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+
+  <!-- Load the following for BootstrapVueIcons support -->
+  <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
+
+  <!-- Jquery for Bootstrap to work properly -->
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+  </script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+  </script>
+</head>
+
+<body>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="clientConnexionContainer" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle">Connexion</h5>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label class="sr-only" for="inputPseudo">Pseudo</label>
+              <input type="text" class="form-control" id="inputPseudo" aria-describedby="emailHelp"
+                data-toggle="tooltip" data-placement="bottom" title="Maximum 20 caractères, minimum 3."
+                placeholder="Pseudo" v-model:value="pseudo">
+            </div>
+            <div class="form-group">
+              <label class="sr-only" for="inputRoom">Room</label>
+              <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">#</div>
+                </div>
+                <input type="text" class="form-control" id="inputRoom" placeholder="Room" data-toggle="tooltip"
+                  data-placement="bottom" title="Suite de 6 caractères [ 0-9 | a-Z ]." v-model:value="room">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <small class="form-text text-muted">Lorsque vous créez une room le nom est automatiquement généré.</small>
+          <button type="button" class="btn btn btn-outline-success" @click="create">Créer une room</button>
+          <button type="button" class="btn btn btn-success" @click="join">Rejoindre une room</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <ul class="nav justify-content-end">
+    <li class="nav-item p-1">
+      <div class="btn-group">
+        <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+          aria-expanded="false">
+          Kick un joueur
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">Joueur 1</a>
+          <a class="dropdown-item" href="#">Joueur 2</a>
+          <a class="dropdown-item" href="#">Joueur 3</a>
+        </div>
+      </div>
+    </li>
+    <li class="nav-item p-1">
+      <button @click="toggle()" id="buttonChatCollapse" class="btn btn-primary" type="button" data-toggle="collapse"
+        data-target="#chat" aria-expanded="false" aria-controls="chat">
+        Chat de la room <span class="badge badge-light" v-if="unreadMessage != 0">{{unreadMessage}}</span>
+      </button>
+    </li>
+  </ul>
+
+
+
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm">
+        <div id="handList" v-if="showCards" class="fixed-bottom">
+          <div class="d-flex justify-content-center align-items-center w-75 mx-auto mb-2">
+            <div class="btn-group" role="group" aria-label="Basic example">
+              <button v-for="card in cardList" type="button"
+                class="btn btn-outline-primary">{{ card.fullName }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm">adad</div>
+      <div id="chat" class="col-sm w-25 p-3 collapse">
+        <div class="overflow-auto" style="height: 300px;">
+          <ul class="list-group" id="chatHistory" >
+            <li class="list-group-item" v-for="data in history" :class="data.style"><strong>{{data.sender}} :</strong>
+              {{data.message}}</li>
+          </ul>
+        </div>
+        <form @submit.prevent="sendMessage">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Votre message" aria-label="Recipient's username"
+              aria-describedby="button-addon2" v-model:value="inputMessage">
+            <div class="input-group-append">
+              <button class="btn btn-primary" type="submit" id="button-addon2">Envoyer</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript">
+    var socket = null;
+
+    class Card {
+      constructor(number, family, fullName) {
+        this.number = number;
+        this.family = family;
+        this.fullName = fullName;
+        this.imgSrc = "images/cards/" + number + family + ".svg";
+      }
+    }
+
+    //Initialisation des cartes de la partie
+    const zeroRed = new Card("0", "red", "0 Rouge");
+    const oneRed = new Card("1", "red", "1 Rouge");
+    const twoRed = new Card("2", "red", "2 Rouge");
+    const threeRed = new Card("3", "red", "3 Rouge");
+    const fourRed = new Card("4", "red", "4 Rouge");
+
+
+    var chatBox = new Vue({
+      el: '#chat',
+      data: {
+        history: [],
+        inputMessage: ""
+      },
+      methods: {
+        addMessage(sender, message, style) {
+          this.history.push({
+            "sender": sender,
+            "message": message,
+            "style": style
+          });
+          buttonChatCollapse.addUnreadMessage();
+        },
+        sendMessage: function () {
+          socket.emit('send-message', {
+            "message": this.inputMessage
+          });
+          this.inputMessage = "";
+        }
+      }
+    })
+
+    var buttonChatCollapse = new Vue({
+      el: "#buttonChatCollapse",
+      data: {
+        unreadMessage: 0,
+        chatDeployed: false
+      },
+      methods: {
+        addUnreadMessage() {
+          if (this.chatDeployed == false) {
+            this.unreadMessage += 1;
+          }
+        },
+        toggle() {
+          if (this.chatDeployed == false) {
+            this.chatDeployed = true;
+            this.unreadMessage = 0;
+          } else {
+            this.chatDeployed = false;
+          }
+        }
+      }
+    })
+
+
+    var clientConnexion = new Vue({
+      el: '#clientConnexionContainer',
+      data: {
+        pseudo: "",
+        room: ""
+      },
+      methods: {
+        show() {
+          $("#clientConnexionContainer").modal("show");
+        },
+        hide() {
+          $("#clientConnexionContainer").modal("hide");
+        },
+        join() {
+          socket.emit('join-room', {
+            "pseudo": this.pseudo,
+            "room": this.room
+          });
+        },
+        create() {
+          socket.emit('create-room', {
+            "pseudo": this.pseudo,
+            "room": this.room
+          });
+        }
+      },
+      created: function () {
+        socket = io({
+          'reconnection': true,
+          'reconnectionDelay': 1000,
+          'reconnectionDelayMax': 5000,
+          'reconnectionAttempts': 50
+        });
+      },
+      mounted: function () {
+        socket.on('show-connexion', function () {
+          clientConnexion.show();
+        })
+        socket.on('hide-connexion', function () {
+          clientConnexion.hide();
+        })
+      }
+    });
+
+    var handRenderCards = new Vue({
+      el: '#handList',
+      data: {
+        cardList: [zeroRed, oneRed, twoRed, threeRed, fourRed, oneRed],
+        showCards: true
+      }
+    });
+
+    var toastNotification = new Vue({
+      methods: {
+        newToast(data) {
+          desc = data.desc;
+          delete data.desc;
+          this.$bvToast.toast(desc, data);
+        }
+      }
+    })
+
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+
+    socket.on('show-toast', function (data) {
+      toastNotification.newToast(data);
+    })
+
+    socket.on('show-chat-message', function (data) {
+      chatBox.addMessage(data.sender, data.message, data.style);
+    })
+  </script>
+</body>
+
+</html>
