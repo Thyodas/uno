@@ -4,7 +4,8 @@
   "description": "Uno en ligne",
   "main": "index.js",
   "scripts": {
-    "devStart": "nodemon uno.js"
+    "devStart": "nodemon uno.js",
+    "start": "node uno.js"
   },
   "author": "Guillaume HEIN",
   "license": "ISC",

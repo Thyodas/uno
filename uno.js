@@ -47,6 +47,7 @@ io.on('connection', (socket) => {
                     "variant": "danger",
                     "toaster": "b-toaster-bottom-right"
                 });
+                socket.emit('show-chat-message', {"sender": "Erreur", "message": "Votre message est vide.", "style": "list-group-item-danger"});
             } else {
                 io.emit('show-chat-message', {"sender": socket.pseudo, "message": data.message, "style": ""});
             }
