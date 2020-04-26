@@ -32,10 +32,15 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
     integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
   </script>
+
+  <!-- Scrolling animation for chatbox -->
+  <script src="https://cdn.jsdelivr.net/npm/vue-chat-scroll/dist/vue-chat-scroll.min.js"></script>
+
+  <!-- lo dash -->
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
 </head>
 
 <body>
-
 
   <!-- Modal -->
   <div class="modal fade" id="clientConnexionContainer" data-backdrop="static" tabindex="-1" role="dialog"
@@ -74,91 +79,89 @@
     </div>
   </div>
 
+  <nav>
+    <div class="nav nav-tabs mx-2 mt-2" id="nav-tab" role="tablist">
+      <a class="nav-item nav-link active" data-toggle="tab" href="#nav-jeu" role="tab"
+        aria-controls="nav-jeu" aria-selected="true">Jeu</a>
+      <a ref="buttonChatCollapse" id="buttonChatCollapse" class="nav-item nav-link" data-toggle="tab" href="#nav-chat" role="tab"
+        aria-controls="nav-chat" aria-selected="false">Chat <span class="badge badge-primary badge-pill" v-if="unreadMessage >= 1">{{unreadMessage}} message<span
+          v-if="unreadMessage > 1">s</span></span></a>
+      <a class="nav-item nav-link" data-toggle="tab" href="#nav-options" role="tab"
+        aria-controls="nav-options" aria-selected="false">Options</a>
+    </div>
+  </nav>
+  <div class="tab-content" id="nav-tabContent">
 
 
-  <ul class="nav justify-content-end">
-    <li class="nav-item p-1">
-      <div class="btn-group">
-        <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-          aria-expanded="false">
-          Kick un joueur
-        </button>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="#">Joueur 1</a>
-          <a class="dropdown-item" href="#">Joueur 2</a>
-          <a class="dropdown-item" href="#">Joueur 3</a>
-        </div>
-      </div>
-    </li>
-    <li class="nav-item p-1">
-      <button @click="toggle()" id="buttonChatCollapse" class="btn btn-primary" type="button" data-toggle="collapse"
-        data-target="#chat" aria-expanded="false" aria-controls="chat">
-        Chat de la room <span class="badge badge-light" v-if="unreadMessage != 0">{{unreadMessage}}</span>
-      </button>
-    </li>
-  </ul>
-
-
-
-
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-sm">
-        <div id="handList" v-if="showCards" class="fixed-bottom">
-          <div class="d-flex justify-content-center align-items-center w-75 mx-auto mb-2">
-            <div class="btn-group" role="group" aria-label="Basic example">
-              <button v-for="card in cardList" type="button"
-                class="btn btn-outline-primary">{{ card.fullName }}</button>
+    <div class="tab-pane fade show active" id="nav-jeu" role="tabpanel" aria-labelledby="nav-home-jeu">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm">
+            <div id="handList" v-if="showCards" class="fixed-bottom">
+              <div class="d-flex justify-content-center align-items-center w-75 mx-auto mb-2">
+                <div class="card-deck">
+                  <div class="card m-0 border-0" v-for="(card, index) in orderedCardList" data-toggle="tooltip"
+                    :title="card.fullName" @click="test(index)">
+                    <img :src="card.imgSrc" class="card-img-top" :alt="card.fullName">
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-sm">adad</div>
-      <div id="chat" class="col-sm w-25 p-3 collapse">
-        <div class="overflow-auto" style="height: 300px;">
-          <ul class="list-group" id="chatHistory" >
-            <li class="list-group-item" v-for="data in history" :class="data.style"><strong>{{data.sender}} :</strong>
-              {{data.message}}</li>
-          </ul>
-        </div>
-        <form @submit.prevent="sendMessage">
-          <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Votre message" aria-label="Recipient's username"
-              aria-describedby="button-addon2" v-model:value="inputMessage">
-            <div class="input-group-append">
-              <button class="btn btn-primary" type="submit" id="button-addon2">Envoyer</button>
-            </div>
-          </div>
-        </form>
       </div>
     </div>
+
+
+    <div class="tab-pane fade" id="nav-chat" role="tabpanel" aria-labelledby="nav-chat-tab">
+      <div class="d-flex align-items-center justify-content-center flex-column h-100">
+        <div id="chat" class="border rounded p-3 m-auto w-75">
+          <div class="overflow-auto border rounded" style="height: 50vh;"
+            v-chat-scroll="{always: false, smooth: true}">
+            <ul class="list-group">
+              <li class="list-group-item border-top-0 border-left-0 border-right-0 rounded-0 p-1"
+                v-for="data in history" :class="data.style"><span class="badge badge-secondary float-right">{{data.date}}</span><span v-if="data.sender != ''"><strong>{{data.sender}}
+                    :<br></strong></span>
+                {{data.message}}
+              </li>
+            </ul>
+          </div>
+          <hr>
+          <form @submit.prevent="sendMessage">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Votre message" aria-label="Recipient's username"
+                aria-describedby="button-addon2" v-model:value="inputMessage">
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="submit" id="button-addon2">Envoyer</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+    <div class="tab-pane fade" id="nav-options" role="tabpanel" aria-labelledby="nav-options-tab">
+      <ul class="nav justify-content-end">
+        <li class="nav-item p-1">
+          <div class="btn-group">
+            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false">
+              Kick un joueur
+            </button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="#">Joueur 1</a>
+              <a class="dropdown-item" href="#">Joueur 2</a>
+              <a class="dropdown-item" href="#">Joueur 3</a>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
-
-
-
-
 
   <script src="/socket.io/socket.io.js"></script>
   <script type="text/javascript">
     var socket = null;
-
-    class Card {
-      constructor(number, family, fullName) {
-        this.number = number;
-        this.family = family;
-        this.fullName = fullName;
-        this.imgSrc = "images/cards/" + number + family + ".svg";
-      }
-    }
-
-    //Initialisation des cartes de la partie
-    const zeroRed = new Card("0", "red", "0 Rouge");
-    const oneRed = new Card("1", "red", "1 Rouge");
-    const twoRed = new Card("2", "red", "2 Rouge");
-    const threeRed = new Card("3", "red", "3 Rouge");
-    const fourRed = new Card("4", "red", "4 Rouge");
-
-
     var chatBox = new Vue({
       el: '#chat',
       data: {
@@ -167,10 +170,13 @@
       },
       methods: {
         addMessage(sender, message, style) {
+          let currentDate = new Date();
+          let date = ("0" + currentDate.getHours()).slice(-2) + ":" + ("0" + currentDate.getMinutes()).slice(-2) + ":" + ("0" + currentDate.getSeconds()).slice(-2);
           this.history.push({
             "sender": sender,
             "message": message,
-            "style": style
+            "style": style,
+            "date": date
           });
           buttonChatCollapse.addUnreadMessage();
         },
@@ -186,22 +192,18 @@
     var buttonChatCollapse = new Vue({
       el: "#buttonChatCollapse",
       data: {
-        unreadMessage: 0,
-        chatDeployed: false
+        unreadMessage: 0
       },
       methods: {
         addUnreadMessage() {
-          if (this.chatDeployed == false) {
+          if (_.includes(this.$refs.buttonChatCollapse.className, 'active')) {
+            this.unreadMessage = 0;
+          } else {
             this.unreadMessage += 1;
           }
         },
-        toggle() {
-          if (this.chatDeployed == false) {
-            this.chatDeployed = true;
-            this.unreadMessage = 0;
-          } else {
-            this.chatDeployed = false;
-          }
+        resetUnread() {
+          this.unreadMessage = 0;
         }
       }
     })
@@ -253,8 +255,26 @@
     var handRenderCards = new Vue({
       el: '#handList',
       data: {
-        cardList: [zeroRed, oneRed, twoRed, threeRed, fourRed, oneRed],
+        cardList: [], //zeroRed, oneRed, twoRed, threeRed, fourRed, oneRed
         showCards: true
+      },
+      methods: {
+        test(element) {
+          console.log(element.uniqID);
+        },
+        setupCards(list) {
+          this.cardList = list;
+        }
+      },
+      computed: {
+        setUniqID: function () {
+          return _.forEach(this.cardList, function (element, position) {
+            element.uniqID = position;
+          });
+        },
+        orderedCardList: function () {
+          return _.orderBy(this.setUniqID, 'fullName')
+        }
       }
     });
 
@@ -266,20 +286,35 @@
           this.$bvToast.toast(desc, data);
         }
       }
-    })
+    });
 
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
-    })
+    });
+
+    $('.btn-outline-dark').popover({
+      trigger: 'focus'
+    });
 
     socket.on('show-toast', function (data) {
       toastNotification.newToast(data);
-    })
+    });
 
     socket.on('show-chat-message', function (data) {
       chatBox.addMessage(data.sender, data.message, data.style);
-    })
+    });
 
+    socket.on("log-test", function (data) {
+      console.log(data);
+    });
+
+    socket.on("card-setup", function (cardList) {
+      handRenderCards.cardList = cardList;
+    });
+
+    $('#buttonChatCollapse').on('shown.bs.tab', function () {
+      buttonChatCollapse.resetUnread();
+    })
   </script>
 </body>
 

@@ -5,6 +5,7 @@ const http = require("http").Server(app)
 const io = require('socket.io')(http)
 
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'))
+app.use(express.static(__dirname + '/public'));
 
 function generateRoom() {
     let char = "0123456789abcdefghijklmnopqrstuvwxyz";
@@ -14,6 +15,24 @@ function generateRoom() {
       }
     return roomName;
 }
+
+class Card {
+    constructor(number, family, fullName) {
+      this.number = number;
+      this.family = family;
+      this.fullName = fullName;
+      this.imgSrc = "images/cards/" + number + family + ".svg";
+    }
+  }
+
+  //Initialisation des cartes de la partie
+  const zeroRed = new Card("0", "red", "0 Rouge");
+  const oneRed = new Card("1", "red", "1 Rouge");
+  const twoRed = new Card("2", "red", "2 Rouge");
+  const threeRed = new Card("3", "red", "3 Rouge");
+  const fourRed = new Card("4", "red", "4 Rouge");
+
+
 
 io.on('connection', (socket) => {
             console.log("Nouvelle connexion !")
@@ -41,11 +60,10 @@ io.on('connection', (socket) => {
                         "variant": "success",
                         "toaster": "b-toaster-top-center"
                     });
-                    socket.broadcast.emit('show-toast', {
-                        "title": "Information",
-                        "desc": "Un nouveau joueur a rejoint la partie !",
-                        "variant": "primary",
-                        "toaster": "b-toaster-bottom-left"
+                    io.to(socket.room).emit('show-chat-message', {
+                        "sender": "",
+                        "message": socket.pseudo + " a créé la partie #" + socket.room,
+                        "style": "list-group-item-light"
                     });
                 }
             })
@@ -76,20 +94,32 @@ io.on('connection', (socket) => {
                         "variant": "success",
                         "toaster": "b-toaster-top-center"
                     });
-                    socket.to(socket.room).broadcast.emit('show-toast', {
+                    socket.broadcast.to(socket.room).emit('show-toast', {
                         "title": "Information",
-                        "desc": "Un nouveau joueur a rejoint la partie !",
+                        "desc": socket.pseudo + " a rejoint la partie #" + socket.room,
                         "variant": "primary",
                         "toaster": "b-toaster-bottom-left"
+                    });
+                    io.to(socket.room).emit('show-chat-message', {
+                        "sender": "",
+                        "message": socket.pseudo + " a rejoint la partie #" + socket.room,
+                        "style": "list-group-item-light"
                     });
                 }
              })
 
              socket.on('send-message', function (data) {
-                if (data.message.trim().toString() == "") {
+                if (socket.pseudo == undefined) {
                     socket.emit('show-toast', {
                         "title": "Erreur",
-                        "desc": "Votre message est vide." + socket.room,
+                        "desc": "Vous devez être connecté pour faire cela.",
+                        "variant": "danger",
+                        "toaster": "b-toaster-bottom-right"
+                    });
+                } else if (data.message.trim().toString() == "") {
+                    socket.emit('show-toast', {
+                        "title": "Erreur",
+                        "desc": "Votre message est vide.",
                         "variant": "danger",
                         "toaster": "b-toaster-bottom-right"
                     });
