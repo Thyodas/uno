@@ -93,7 +93,8 @@
     <li class="nav-item p-1">
       <button @click="toggle()" id="buttonChatCollapse" class="btn btn-primary" type="button" data-toggle="collapse"
         data-target="#chat" aria-expanded="false" aria-controls="chat">
-        Chat de la room <span class="badge badge-light" v-if="unreadMessage != 0">{{unreadMessage}}</span>
+        Chat de la room <span class="badge badge-light" v-if="unreadMessage >= 1">{{unreadMessage}} message<span
+            v-if="unreadMessage > 1">s</span></span>
       </button>
     </li>
   </ul>
@@ -106,23 +107,35 @@
       <div class="col-sm">
         <div id="handList" v-if="showCards" class="fixed-bottom">
           <div class="d-flex justify-content-center align-items-center w-75 mx-auto mb-2">
-            <div class="btn-group" role="group" aria-label="Basic example">
-              <button v-for="card in cardList" type="button"
-                class="btn btn-outline-primary">{{ card.fullName }}</button>
+            <!--<div class="btn-group" role="group" aria-label="Basic example">
+              <button v-for="card in cardList" type="button" class="btn btn-outline-dark">
+                {{ card.fullName }}
+              </button>
+            </div>-->
+            <!-- Cartes -->
+            <div class="card-deck">
+              <div class="card m-0 border-0" v-for="(card, index) in cardList" data-toggle="tooltip"
+                :title="card.fullName" @click="test(index)">
+                <img :src="card.imgSrc" class="card-img-top" :alt="card.fullName">
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div class="col-sm">adad</div>
-      <div id="chat" class="col-sm w-25 p-3 collapse">
-        <div class="overflow-auto" style="height: 300px;">
-          <ul class="list-group" id="chatHistory" >
-            <li class="list-group-item" v-for="data in history" :class="data.style"><strong>{{data.sender}} :</strong>
-              {{data.message}}</li>
+      <div id="chat" class="col-sm w-25 collapse position-absolute mt-5 mr-2 border rounded p-3"
+        style="top: 0; right: 0;">
+        <div class="overflow-auto border rounded" style="height: 300px;">
+          <ul class="list-group" id="chatHistory">
+            <li class="list-group-item border-top-0 border-left-0 border-right-0 rounded-0" v-for="data in history"
+              :class="data.style"><strong>{{data.sender}} :</strong>
+              {{data.message}}
+            </li>
           </ul>
         </div>
+        <hr>
         <form @submit.prevent="sendMessage">
-          <div class="input-group mb-3">
+          <div class="input-group">
             <input type="text" class="form-control" placeholder="Votre message" aria-label="Recipient's username"
               aria-describedby="button-addon2" v-model:value="inputMessage">
             <div class="input-group-append">
@@ -255,6 +268,11 @@
       data: {
         cardList: [zeroRed, oneRed, twoRed, threeRed, fourRed, oneRed],
         showCards: true
+      },
+      methods: {
+        test(element) {
+          console.log(element);
+        }
       }
     });
 
@@ -272,6 +290,10 @@
       $('[data-toggle="tooltip"]').tooltip()
     })
 
+    $('.btn-outline-dark').popover({
+      trigger: 'focus'
+    })
+
     socket.on('show-toast', function (data) {
       toastNotification.newToast(data);
     })
@@ -279,7 +301,6 @@
     socket.on('show-chat-message', function (data) {
       chatBox.addMessage(data.sender, data.message, data.style);
     })
-
   </script>
 </body>
 
