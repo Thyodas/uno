@@ -5,6 +5,7 @@ const http = require("http").Server(app)
 const io = require('socket.io')(http)
 
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'))
+app.use(express.static(__dirname + '/public'));
 
 function generateRoom() {
     let char = "0123456789abcdefghijklmnopqrstuvwxyz";
@@ -86,10 +87,17 @@ io.on('connection', (socket) => {
              })
 
              socket.on('send-message', function (data) {
-                if (data.message.trim().toString() == "") {
+                if (socket.pseudo == undefined) {
                     socket.emit('show-toast', {
                         "title": "Erreur",
-                        "desc": "Votre message est vide." + socket.room,
+                        "desc": "Vous devez être connecté pour faire cela.",
+                        "variant": "danger",
+                        "toaster": "b-toaster-bottom-right"
+                    });
+                } else if (data.message.trim().toString() == "") {
+                    socket.emit('show-toast', {
+                        "title": "Erreur",
+                        "desc": "Votre message est vide.",
                         "variant": "danger",
                         "toaster": "b-toaster-bottom-right"
                     });
