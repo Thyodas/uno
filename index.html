@@ -38,6 +38,9 @@
 
   <!-- lo dash -->
   <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Nunito:600&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -81,13 +84,13 @@
 
   <nav>
     <div class="nav nav-tabs mx-2 mt-2" id="nav-tab" role="tablist">
-      <a class="nav-item nav-link active" data-toggle="tab" href="#nav-jeu" role="tab"
-        aria-controls="nav-jeu" aria-selected="true">Jeu</a>
-      <a ref="buttonChatCollapse" id="buttonChatCollapse" class="nav-item nav-link" data-toggle="tab" href="#nav-chat" role="tab"
-        aria-controls="nav-chat" aria-selected="false">Chat <span class="badge badge-primary badge-pill" v-if="unreadMessage >= 1">{{unreadMessage}} message<span
-          v-if="unreadMessage > 1">s</span></span></a>
-      <a class="nav-item nav-link" data-toggle="tab" href="#nav-options" role="tab"
-        aria-controls="nav-options" aria-selected="false">Options</a>
+      <a class="nav-item nav-link active" data-toggle="tab" href="#nav-jeu" role="tab" aria-controls="nav-jeu"
+        aria-selected="true">Jeu</a>
+      <a ref="buttonChatCollapse" id="buttonChatCollapse" class="nav-item nav-link" data-toggle="tab" href="#nav-chat"
+        role="tab" aria-controls="nav-chat" aria-selected="false">Chat <span class="badge badge-primary badge-pill"
+          v-if="unreadMessage >= 1">{{unreadMessage}} message<span v-if="unreadMessage > 1">s</span></span></a>
+      <a class="nav-item nav-link" data-toggle="tab" href="#nav-options" role="tab" aria-controls="nav-options"
+        aria-selected="false">Options</a>
     </div>
   </nav>
   <div class="tab-content" id="nav-tabContent">
@@ -114,14 +117,18 @@
 
 
     <div class="tab-pane fade" id="nav-chat" role="tabpanel" aria-labelledby="nav-chat-tab">
-      <div class="d-flex align-items-center justify-content-center flex-column h-100">
+      <div class="d-flex align-items-center justify-content-center flex-column h-100 mt-3">
         <div id="chat" class="border rounded p-3 m-auto w-75">
-          <div class="overflow-auto border rounded" style="height: 50vh;"
+          <div class="border rounded text-wrap" style="height: 50vh; width: 100%; overflow-x: hidden; overflow-y: auto;"
             v-chat-scroll="{always: false, smooth: true}">
             <ul class="list-group">
-              <li class="list-group-item border-top-0 border-left-0 border-right-0 rounded-0 p-1"
-                v-for="data in history" :class="data.style"><span class="badge badge-secondary float-right">{{data.date}}</span><span v-if="data.sender != ''"><strong>{{data.sender}}
-                    :<br></strong></span>
+              <li class="list-group-item border-top-0 border-left-0 border-right-0 rounded-0 p-1 text-wrap"
+                v-for="data in history" :class="data.style"><span
+                  class="badge badge-secondary float-right badge-pill">{{data.date}}</span><span
+                  v-if="data.sender != ''">
+                    <div class="badge badge-primary p-2 m-0" style="font-size: 1em;">
+                      {{data.sender}}
+                    </div></span>
                 {{data.message}}
               </li>
             </ul>
@@ -159,6 +166,12 @@
     </div>
   </div>
 
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif !important;
+    }
+  </style>
+
   <script src="/socket.io/socket.io.js"></script>
   <script type="text/javascript">
     var socket = null;
@@ -171,7 +184,8 @@
       methods: {
         addMessage(sender, message, style) {
           let currentDate = new Date();
-          let date = ("0" + currentDate.getHours()).slice(-2) + ":" + ("0" + currentDate.getMinutes()).slice(-2) + ":" + ("0" + currentDate.getSeconds()).slice(-2);
+          let date = ("0" + currentDate.getHours()).slice(-2) + ":" + ("0" + currentDate.getMinutes()).slice(-2) +
+            ":" + ("0" + currentDate.getSeconds()).slice(-2);
           this.history.push({
             "sender": sender,
             "message": message,
