@@ -6,7 +6,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="description" content="Demo project">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <!-- Load required Bootstrap and BootstrapVue CSS -->
   <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
   <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
@@ -82,7 +82,9 @@
     </div>
   </div>
 
-  <nav>
+
+  <!-- Navbar -->
+  <nav id="navbar">
     <div class="nav nav-tabs mx-2 mt-2" id="nav-tab" role="tablist">
       <a class="nav-item nav-link active" data-toggle="tab" href="#nav-jeu" role="tab" aria-controls="nav-jeu"
         aria-selected="true">Jeu</a>
@@ -90,7 +92,14 @@
         role="tab" aria-controls="nav-chat" aria-selected="false">Chat <span class="badge badge-primary badge-pill"
           v-if="unreadMessage >= 1">{{unreadMessage}} message<span v-if="unreadMessage > 1">s</span></span></a>
       <a class="nav-item nav-link" data-toggle="tab" href="#nav-options" role="tab" aria-controls="nav-options"
-        aria-selected="false">Options</a>
+        aria-selected="false" v-if="show.OptionMenu">Options</a>
+      <ul class="nav navbar-nav ml-auto">
+        <li v-if="show.StartButton"><button type="button" class="btn btn btn-success">
+            <div class="spinner-grow spinner-grow-sm align-middle mr-1" role="status">
+              <span class="sr-only">En attente du lancement de la partie</span>
+            </div>Lancer la partie
+          </button></li>
+      </ul>
     </div>
   </nav>
   <div class="tab-content" id="nav-tabContent">
@@ -117,8 +126,8 @@
 
 
     <div class="tab-pane fade" id="nav-chat" role="tabpanel" aria-labelledby="nav-chat-tab">
-      <div class="d-flex align-items-center justify-content-center flex-column h-100 mt-3">
-        <div id="chat" class="border rounded p-3 m-auto w-75">
+      <div class="container mt-3">
+        <div id="chat" class="border rounded p-3 m-auto">
           <div class="border rounded text-wrap" style="height: 50vh; width: 100%; overflow-x: hidden; overflow-y: auto;"
             v-chat-scroll="{always: false, smooth: true}">
             <ul class="list-group">
@@ -126,9 +135,10 @@
                 v-for="data in history" :class="data.style"><span
                   class="badge badge-secondary float-right badge-pill">{{data.date}}</span><span
                   v-if="data.sender != ''">
-                    <div class="badge badge-primary p-2 m-0" style="font-size: 1em;">
-                      {{data.sender}}
-                    </div></span>
+                  <div class="badge badge-dark p-1 m-0" style="font-size: 1em;">
+                    {{data.sender}}
+                  </div>
+                </span>
                 {{data.message}}
               </li>
             </ul>
@@ -148,27 +158,113 @@
 
     </div>
     <div class="tab-pane fade" id="nav-options" role="tabpanel" aria-labelledby="nav-options-tab">
-      <ul class="nav justify-content-end">
-        <li class="nav-item p-1">
-          <div class="btn-group">
-            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-              aria-expanded="false">
-              Kick un joueur
-            </button>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" href="#">Joueur 1</a>
-              <a class="dropdown-item" href="#">Joueur 2</a>
-              <a class="dropdown-item" href="#">Joueur 3</a>
+      <div class="container border rounded mt-3">
+        <form>
+          <div class="form-group row m-2">
+            <div class="col-sm-2 h5 text-center">Paramètres de la partie</div>
+            <div class="col-sm-10">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="activateCheat">
+                <label class="form-check-label" for="activateCheat">
+                  <div class="badge badge-warning p-1" style="font-size: 1em;">Non disponible</div> Autoriser la triche
+                  <p class="text-muted">
+                    Autorise les joueurs à placer la carte qu'ils veulent pendant leur tour, si un joueur est suspecté
+                    de triche vous pouvez faire un vote pour qu'il pioche une carte.
+                  </p>
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="vocalMode">
+                <label class="form-check-label" for="vocalMode">
+                  <div class="badge badge-warning p-1" style="font-size: 1em;">Non disponible</div> Mode vocal
+                  <p class="text-muted">
+                    Lorsque le joueur est sur le point d'avoir qu'une seule carte restante il doit dire UNO, s'il oublie
+                    ou qu'un contre uno a été fait un vote pourra être effectué contre lui pour qu'il tire une carte.
+                  </p>
+                </label>
+              </div>
             </div>
           </div>
-        </li>
-      </ul>
+          <hr>
+          <div class="form-group row m-2">
+            <div class="col-sm-2 h5 text-center">Gérer les joueurs</div>
+            <div class="col-sm-10">
+              <div class="accordion" id="accordionExample">
+
+                <div class="card">
+                  <div class="card-header btn btn-link" id="headingOne" type="button" data-toggle="collapse"
+                    data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Gérer Thyodas
+                  </div>
+                  <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                    data-parent="#accordionExample">
+                    <div class="card-body">
+                      <button type="button" class="btn btn-danger mx-2">Kick</button><button type="button"
+                        class="btn btn-outline-danger mx-2">Mute du chat</button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
+    </li>
+    </ul>
+  </div>
   </div>
 
   <style>
     body {
       font-family: 'Nunito', sans-serif !important;
+    }
+
+    * {
+      height: auto;
+    }
+
+    ::-webkit-scrollbar {
+      width: 9px;
+      height: 9px;
+    }
+
+    ::-webkit-scrollbar-button {
+      width: 0px;
+      height: 0px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #e1e1e1;
+      border: 0px none #ffffff;
+      border-radius: 50px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #ffffff;
+    }
+
+    ::-webkit-scrollbar-thumb:active {
+      background: #bcbcbc;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #939393;
+      border: 0px none #ffffff;
+      border-radius: 50px;
+    }
+
+    ::-webkit-scrollbar-track:hover {
+      background: #666666;
+    }
+
+    ::-webkit-scrollbar-track:active {
+      background: #333333;
+    }
+
+    ::-webkit-scrollbar-corner {
+      background: transparent;
     }
   </style>
 
@@ -182,7 +278,7 @@
         inputMessage: ""
       },
       methods: {
-        addMessage(sender, message, style) {
+        addMessage: function (sender, message, style) {
           let currentDate = new Date();
           let date = ("0" + currentDate.getHours()).slice(-2) + ":" + ("0" + currentDate.getMinutes()).slice(-2) +
             ":" + ("0" + currentDate.getSeconds()).slice(-2);
@@ -192,7 +288,7 @@
             "style": style,
             "date": date
           });
-          buttonChatCollapse.addUnreadMessage();
+          navbar.addUnreadMessage();
         },
         sendMessage: function () {
           socket.emit('send-message', {
@@ -201,48 +297,54 @@
           this.inputMessage = "";
         }
       }
-    })
+    });
 
-    var buttonChatCollapse = new Vue({
-      el: "#buttonChatCollapse",
+    var navbar = new Vue({
+      el: "#navbar",
       data: {
-        unreadMessage: 0
+        unreadMessage: 0,
+        show: {
+          "OptionMenu": false,
+          "StartButton": false
+        }
       },
       methods: {
-        addUnreadMessage() {
+        toggleNavElements: function (element, option) {
+          this.show[element] = option;
+        },
+        addUnreadMessage: function () {
           if (_.includes(this.$refs.buttonChatCollapse.className, 'active')) {
             this.unreadMessage = 0;
           } else {
             this.unreadMessage += 1;
           }
         },
-        resetUnread() {
+        resetUnread: function () {
           this.unreadMessage = 0;
         }
       }
-    })
-
+    });
 
     var clientConnexion = new Vue({
       el: '#clientConnexionContainer',
       data: {
-        pseudo: "",
+        pseudo: "Testing",
         room: ""
       },
       methods: {
-        show() {
+        show: function () {
           $("#clientConnexionContainer").modal("show");
         },
-        hide() {
+        hide: function () {
           $("#clientConnexionContainer").modal("hide");
         },
-        join() {
+        join: function () {
           socket.emit('join-room', {
             "pseudo": this.pseudo,
             "room": this.room
           });
         },
-        create() {
+        create: function () {
           socket.emit('create-room', {
             "pseudo": this.pseudo
           });
@@ -273,10 +375,10 @@
         showCards: true
       },
       methods: {
-        test(element) {
+        test: function (element) {
           console.log(element.uniqID);
         },
-        setupCards(list) {
+        setupCards: function (list) {
           this.cardList = list;
         }
       },
@@ -294,7 +396,7 @@
 
     var toastNotification = new Vue({
       methods: {
-        newToast(data) {
+        newToast: function (data) {
           desc = data.desc;
           delete data.desc;
           this.$bvToast.toast(desc, data);
@@ -326,8 +428,12 @@
       handRenderCards.cardList = cardList;
     });
 
+    socket.on('toggle-nav-el', function (data) {
+      navbar.toggleNavElements(data.element, data.option);
+    });
+
     $('#buttonChatCollapse').on('shown.bs.tab', function () {
-      buttonChatCollapse.resetUnread();
+      navbar.resetUnread();
     })
   </script>
 </body>
