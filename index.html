@@ -93,8 +93,29 @@
           v-if="unreadMessage >= 1">{{unreadMessage}} message<span v-if="unreadMessage > 1">s</span></span></a>
       <a class="nav-item nav-link" data-toggle="tab" href="#nav-options" role="tab" aria-controls="nav-options"
         aria-selected="false" v-if="show.OptionMenu">Options</a>
-      <ul class="nav navbar-nav ml-auto">
-        <li v-if="show.StartButton"><button type="button" class="btn btn btn-success">
+      <ul class="nav navbar-nav flex-row ml-auto">
+        <li class="justify-content-center align-self-center mr-2"><span class="text-muted">#{{ room }}</span></li>
+        <li class="justify-content-center align-self-center mr-2">
+          <!--<button @mouseover="mouseOver" @click="copyToClipboard" data-toggle="tooltip" data-placement="bottom" title="Copier le lien"
+            type="button" class="btn btn btn-light" id="btnCopyRoomToClipBoard">
+            #{{ room }} 
+          </button>-->
+          
+          <div class="input-group">
+            <input class="border rounded-left pl-1" type="text" id="roomLinkToClipboard" v-model:value="roomLink"> <!-- génère le lien pour le copier -->
+            <div class="input-group-append">
+              <button class="btn btn-secondary px-2 p-1" @click="copyToClipboard" type="button" data-toggle="tooltip" data-placement="bottom" title="Copier le lien">
+                <svg class="bi bi-link-45deg" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4.715 6.542L3.343 7.914a3 3 0 104.243 4.243l1.828-1.829A3 3 0 008.586 5.5L8 6.086a1.001 1.001 0 00-.154.199 2 2 0 01.861 3.337L6.88 11.45a2 2 0 11-2.83-2.83l.793-.792a4.018 4.018 0 01-.128-1.287z"/>
+                  <path d="M5.712 6.96l.167-.167a1.99 1.99 0 01.896-.518 1.99 1.99 0 01.518-.896l.167-.167A3.004 3.004 0 006 5.499c-.22.46-.316.963-.288 1.46z"/>
+                  <path d="M6.586 4.672A3 3 0 007.414 9.5l.775-.776a2 2 0 01-.896-3.346L9.12 3.55a2 2 0 012.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 00-4.243-4.243L6.586 4.672z"/>
+                  <path d="M10 9.5a2.99 2.99 0 00.288-1.46l-.167.167a1.99 1.99 0 01-.896.518 1.99 1.99 0 01-.518.896l-.167.167A3.004 3.004 0 0010 9.501z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </li>
+        <li class="justify-content-center align-self-center" v-if="show.StartButton"><button type="button" class="btn btn btn-success">
             <div class="spinner-grow spinner-grow-sm align-middle mr-1" role="status">
               <span class="sr-only">En attente du lancement de la partie</span>
             </div>Lancer la partie
@@ -148,9 +169,11 @@
             <div class="input-group">
               <input type="text" class="form-control" placeholder="Votre message" aria-label="Recipient's username"
                 aria-describedby="button-addon2" v-model:value="inputMessage">
+
               <div class="input-group-append">
                 <button class="btn btn-primary" type="submit" id="button-addon2">Envoyer</button>
               </div>
+
             </div>
           </form>
         </div>
@@ -159,8 +182,8 @@
     </div>
     <div class="tab-pane fade" id="nav-options" role="tabpanel" aria-labelledby="nav-options-tab">
       <div class="container border rounded mt-3">
-        <form>
-          <div class="form-group row m-2">
+        <form class="m-3">
+          <div class="form-group row">
             <div class="col-sm-2 h5 text-center">Paramètres de la partie</div>
             <div class="col-sm-10">
               <div class="form-check">
@@ -189,20 +212,29 @@
           <div class="form-group row m-2">
             <div class="col-sm-2 h5 text-center">Gérer les joueurs</div>
             <div class="col-sm-10">
-              <div class="accordion" id="accordionExample">
+              <div class="accordion" id="playerManagerList">
 
-                <div class="card">
-                  <div class="card-header btn btn-link" id="headingOne" type="button" data-toggle="collapse"
-                    data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Gérer Thyodas
+                <div class="text-center" v-if="playerListWithoutAdmin.length == 0">
+                  <p class="text-muted">
+                    Oh il semblerait que vous soyez tout seul dans la partie ! 😬
+                  </p>
+                </div>
+
+                <div class="card" v-for="(joueur, index) in playerListWithoutAdmin">
+                  <div class="card-header btn btn-link" :id="'heading'+index" type="button" data-toggle="collapse"
+                    :data-target="'#collapse'+index" aria-expanded="false" :aria-controls="'collapse'+index">
+                    Gérer {{ joueur }}
                   </div>
-                  <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
-                    data-parent="#accordionExample">
+                  <!-- l'attribut class est relatif, si index == 0 alors on expand la card sinon non -->
+                  <div :id="'collapse'+index" :class="'collapse ' + [index == 0 ? 'show' : '']"
+                    :aria-labelledby="'heading'+index" data-parent="#playerManagerList">
                     <div class="card-body">
-                      <button type="button" class="btn btn-danger mx-2">Kick</button><button type="button"
-                        class="btn btn-outline-danger mx-2">Mute du chat</button>
+                      <button @click="kick(joueur)" type="button" class="btn btn-danger mx-2">Kick</button>
+                      <button v-if="_.includes(mutedList, joueur)" @click="mute(joueur)" type="button" class="btn btn-outline-dark mx-2">Démute du chat</button>
+                      <button v-else @click="mute(joueur)" type="button" class="btn btn-dark mx-2">Mute du chat</button>
                     </div>
                   </div>
+
                 </div>
 
               </div>
@@ -270,7 +302,26 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script type="text/javascript">
+    class Card {
+      constructor(number, family, fullName) {
+        this.number = number;
+        this.family = family;
+        this.fullName = fullName;
+        this.imgSrc = "/images/cards/" + number + family + ".svg";
+      }
+    }
+
+
+    //Initialisation des cartes de la partie
+    const zeroRed = new Card("0", "red", "0 Rouge");
+    const oneRed = new Card("1", "red", "1 Rouge");
+    const twoRed = new Card("2", "red", "2 Rouge");
+    const threeRed = new Card("3", "red", "3 Rouge");
+    const fourRed = new Card("4", "red", "4 Rouge");
+
     var socket = null;
+
+
     var chatBox = new Vue({
       el: '#chat',
       data: {
@@ -295,6 +346,37 @@
             "message": this.inputMessage
           });
           this.inputMessage = "";
+        },
+        resetHistory: function () {
+          this.history = [];
+        }
+      }
+    });
+
+    var playerManagerList = new Vue({
+      /*
+      Affiche dans le menu option (reservé à l'admin de la partie)
+      la liste des joueurs afin de les gérer et d'exécuter certaines actions comme "Kick" ou "Mute"
+      */
+      el: '#playerManagerList',
+      data: {
+        playerList: [],
+        mutedList: []
+      },
+      computed: {
+        playerListWithoutAdmin: function () {
+          return _.drop(this.playerList); //Retourne une liste sans le premier joueur qui est l'admin de la partie
+        }
+      },
+      methods: {
+        kick: function (joueur) {
+          socket.emit('kick-player', joueur);
+        },
+        mute: function (joueur) {
+          socket.emit('toggle-mute', joueur);
+        },
+        refreshMutedList: function (list) {
+          this.mutedList = list;
         }
       }
     });
@@ -303,9 +385,11 @@
       el: "#navbar",
       data: {
         unreadMessage: 0,
+        room: '',
         show: {
           "OptionMenu": false,
-          "StartButton": false
+          "StartButton": false,
+          "roomName": false
         }
       },
       methods: {
@@ -321,6 +405,22 @@
         },
         resetUnread: function () {
           this.unreadMessage = 0;
+        },
+        updateRoom: function (room) {
+          this.room = room;
+          this.show["roomName"] = true;
+        },
+        copyToClipboard: function () {
+          // this.$refs.roomLinkToClipboard.select(); on selectionne l'intérieur du ref="roomLinkToClipboard"
+          $('#roomLinkToClipboard').select();
+          document.execCommand('copy');
+        },
+        mouseOver: function(){
+            this.show.linkVisibility = !this.show.linkVisibility;
+        }
+      }, computed: {
+        roomLink: function () {
+          return window.origin + "/room/" + this.room;
         }
       }
     });
@@ -348,11 +448,14 @@
           socket.emit('create-room', {
             "pseudo": this.pseudo
           });
+        },
+        changeRoomInput: function (room) {
+          this.room = room;
         }
       },
       created: function () {
         socket = io({
-          'reconnection': true,
+          'reconnection': false,
           'reconnectionDelay': 1000,
           'reconnectionDelayMax': 5000,
           'reconnectionAttempts': 50
@@ -371,23 +474,19 @@
     var handRenderCards = new Vue({
       el: '#handList',
       data: {
-        cardList: [], //zeroRed, oneRed, twoRed, threeRed, fourRed, oneRed
+        cardList: [zeroRed, zeroRed, zeroRed, zeroRed,
+        zeroRed], //zeroRed, oneRed, twoRed, threeRed, fourRed, oneRed
         showCards: true
       },
       methods: {
         test: function (element) {
-          console.log(element.uniqID);
+          console.log(element.fullName);
         },
         setupCards: function (list) {
           this.cardList = list;
         }
       },
       computed: {
-        setUniqID: function () {
-          return _.forEach(this.cardList, function (element, position) {
-            element.uniqID = position;
-          });
-        },
         orderedCardList: function () {
           return _.orderBy(this.setUniqID, 'fullName')
         }
@@ -402,10 +501,6 @@
           this.$bvToast.toast(desc, data);
         }
       }
-    });
-
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
     });
 
     $('.btn-outline-dark').popover({
@@ -432,9 +527,39 @@
       navbar.toggleNavElements(data.element, data.option);
     });
 
+    socket.on('refresh-playerlist', function (data) {
+      //Actualise sur plusieurs fonctions de la page les joueurs présents dans la partie
+      playerManagerList.playerList = data.playerList;
+    });
+
+    socket.on('update-room', function (data) {
+      //Met à jour le numéro de la salle dans la nav
+      navbar.updateRoom(data.room);
+      $('[data-toggle="tooltip"]').tooltip();
+
+      //Reset le chat car room changé
+      navbar.resetUnread();
+      chatBox.resetHistory();
+    });
+
+    socket.on('refresh-mutedList', function (data) {
+      //Actualise la liste des personnes mutes pour l'admin
+      playerManagerList.refreshMutedList(data);
+    })
+
     $('#buttonChatCollapse').on('shown.bs.tab', function () {
       navbar.resetUnread();
-    })
+    });
+
+    windowPath = window.location.pathname.split('/');
+    if (windowPath[1] == "room" && windowPath[2].length == 6) {
+      clientConnexion.changeRoomInput(windowPath[2]);
+    }
+
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+
   </script>
 </body>
 
