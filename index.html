@@ -57,7 +57,7 @@
           <form>
             <div class="form-group">
               <label class="sr-only" for="inputPseudo">Pseudo</label>
-              <input type="text" class="form-control" id="inputPseudo" aria-describedby="emailHelp"
+              <input type="text" class="form-control" :class="pseudoClass" id="inputPseudo" aria-describedby="emailHelp"
                 data-toggle="tooltip" data-placement="bottom" title="Maximum 20 caractères, minimum 3."
                 placeholder="Pseudo" v-model:value="pseudo">
             </div>
@@ -67,7 +67,7 @@
                 <div class="input-group-prepend">
                   <div class="input-group-text">#</div>
                 </div>
-                <input type="text" class="form-control" id="inputRoom" placeholder="Room" data-toggle="tooltip"
+                <input type="text" class="form-control" :class="roomClass" id="inputRoom" placeholder="Room" data-toggle="tooltip"
                   data-placement="bottom" title="Suite de 6 caractères [ 0-9 | a-Z ]." v-model:value="room">
               </div>
             </div>
@@ -170,10 +170,14 @@
               <input type="text" class="form-control" placeholder="Votre message" aria-label="Recipient's username"
                 aria-describedby="button-addon2" v-model:value="inputMessage">
 
+                
+
               <div class="input-group-append">
-                <button class="btn btn-primary" type="submit" id="button-addon2">Envoyer</button>
+                <button class="btn btn-primary rounded-right" type="submit" id="button-addon2">Envoyer</button>
               </div>
 
+
+              <span class="input-group-text border-0" style="background: transparent;">{{inputLength}} / 300</span>
             </div>
           </form>
         </div>
@@ -186,9 +190,9 @@
           <div class="form-group row">
             <div class="col-sm-2 h5 text-center">Paramètres de la partie</div>
             <div class="col-sm-10">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="activateCheat">
-                <label class="form-check-label" for="activateCheat">
+              <div class="custom-control custom-switch">
+                <input class="custom-control-input" type="checkbox" id="activateCheat">
+                <label class="custom-control-label" for="activateCheat">
                   <div class="badge badge-warning p-1" style="font-size: 1em;">Non disponible</div> Autoriser la triche
                   <p class="text-muted">
                     Autorise les joueurs à placer la carte qu'ils veulent pendant leur tour, si un joueur est suspecté
@@ -196,9 +200,9 @@
                   </p>
                 </label>
               </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="vocalMode">
-                <label class="form-check-label" for="vocalMode">
+              <div class="custom-control custom-switch">
+                <input class="custom-control-input" type="checkbox" id="vocalMode">
+                <label class="custom-control-label" for="vocalMode">
                   <div class="badge badge-warning p-1" style="font-size: 1em;">Non disponible</div> Mode vocal
                   <p class="text-muted">
                     Lorsque le joueur est sur le point d'avoir qu'une seule carte restante il doit dire UNO, s'il oublie
@@ -326,7 +330,8 @@
       el: '#chat',
       data: {
         history: [],
-        inputMessage: ""
+        inputMessage: "",
+        inputLength: 0
       },
       methods: {
         addMessage: function (sender, message, style) {
@@ -349,6 +354,11 @@
         },
         resetHistory: function () {
           this.history = [];
+        }
+      },
+      watch: {
+        inputMessage: function() {
+          this.inputLength = this.inputMessage.length;
         }
       }
     });
@@ -429,7 +439,9 @@
       el: '#clientConnexionContainer',
       data: {
         pseudo: "Testing",
-        room: ""
+        pseudoClass: "",
+        room: "",
+        roomClass: ""
       },
       methods: {
         show: function () {
@@ -468,6 +480,22 @@
         socket.on('hide-connexion', function () {
           clientConnexion.hide();
         })
+      },
+      watch: {
+        pseudo: function() { //vérifie si l'input pseudo est valide du côté client
+          if (this.pseudo.length >= 3 && this.pseudo.length <= 20) {
+            this.pseudoClass = "is-valid";
+          } else {
+            this.pseudoClass = "is-invalid";
+          }
+        },
+        room: function() {
+          if (this.room.length == 6) {
+            this.roomClass = "is-valid";
+          } else {
+            this.roomClass = "is-invalid";
+          }
+        }
       }
     });
 
