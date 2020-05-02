@@ -267,7 +267,15 @@ io.on('connection', (socket) => {
                 "variant": "danger",
                 "toaster": "b-toaster-bottom-right"
             });
-        } else {
+        } else if (data.message.length > 300) {
+            socket.emit('show-toast', {
+                "title": "Erreur",
+                "desc": "Votre message est trop long !",
+                "variant": "danger",
+                "toaster": "b-toaster-bottom-right"
+            });
+        }
+        else {
             io.to(socket.room).emit('show-chat-message', {
                 "sender": socket.pseudo,
                 "message": data.message,
