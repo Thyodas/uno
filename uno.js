@@ -4,6 +4,7 @@ const app = express();
 const http = require("http").Server(app);
 const io = require('socket.io')(http);
 const _ = require('lodash');
+const cards = require('./private/cards.json')
 
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 app.get('/room/*', (req, res) => res.sendFile(__dirname + '/index.html'));
@@ -61,22 +62,19 @@ function socketFlush(socket) { //Reset le socket et ses informations
     delete socket.isConnected;
 };
 
-class Card {
-    constructor(number, family, fullName) {
-        this.number = number;
-        this.family = family;
-        this.fullName = fullName;
-        this.imgSrc = "/images/cards/" + number + family + ".svg";
-    }
+
+//Initialisation du paquet de carte
+var deck = [];
+//quadruples (les cartes chgmt de couleur et plus 4)
+for (let i = 0; i < 4; i++) {
+    deck.push(cards.plus4,cards.colorChange);
 }
-
-//Initialisation des cartes de la partie
-const zeroRed = new Card("0", "red", "0 Rouge");
-const oneRed = new Card("1", "red", "1 Rouge");
-const twoRed = new Card("2", "red", "2 Rouge");
-const threeRed = new Card("3", "red", "3 Rouge");
-const fourRed = new Card("4", "red", "4 Rouge");
-
+//doubles (toutes les cartes de couleurs sauf 0)
+for (let i = 0; i < 2; i++) {
+    deck.push(cards.oneRed,cards.twoRed,cards.threeRed,cards.fourRed,cards.fiveRed,cards.sixRed,cards.sevenRed,cards.eightRed,cards.nineRed,cards.blockRed,cards.turnRed,cards.plus2Red,cards.oneYellow,cards.twoYellow,cards.threeYellow,cards.fourYellow,cards.fiveYellow,cards.sixYellow,cards.sevenYellow,cards.eightYellow,cards.nineYellow,cards.blockYellow,cards.turnYellow,cards.plus2Yellow,cards.oneGreen,cards.twoGreen,cards.threeGreen,cards.fourGreen,cards.fiveGreen,cards.sixGreen,cards.sevenGreen,cards.eightGreen,cards.nineGreen,cards.blockGreen,cards.turnGreen,cards.plus2Green,cards.oneBlue,cards.twoBlue,cards.threeBlue,cards.fourBlue,cards.fiveBlue,cards.sixBlue,cards.sevenBlue,cards.eightBlue,cards.nineBlue,cards.blockBlue,cards.turnBlue,cards.plus2Blue);
+}
+//unique (les cartes ayant comme chiffre 0)
+deck.push(cards.zeroRed,cards.zeroYellow,cards.zeroGreen,cards.zeroBlue);
 
 
 io.on('connection', (socket) => {
@@ -373,3 +371,11 @@ io.on('connection', (socket) => {
 
 
 http.listen(PORT, () => console.log("Server listening on port" + PORT))
+var newDeck = deck;
+var p1Deck;
+
+p1Deck =  _.take(newDeck, 7);
+newDeck = _.drop(newDeck, 7);
+
+console.log(p1Deck);
+console.log(newDeck);

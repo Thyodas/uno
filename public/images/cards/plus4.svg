@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="242" height="362" version="1.1" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(-1859 -691.36)">
+  <g transform="matrix(4 0 0 4 -1260 -2077.1)">
+   <rect x="780" y="692.36" width="60" height="90" rx="10" ry="10" fill="#fff" fill-rule="evenodd" stroke="#000" stroke-width=".5"/>
+   <rect x="785" y="697.36" width="50" height="80" rx="5" ry="5" fill-rule="evenodd"/>
+   <g fill="#fff">
+    <path d="m825 712.36c-22.091 0-40 17.909-40 40 0 5.5228 4.4772 10 10 10 22.091 0 40-17.909 40-40 0-5.5228-4.4772-10-10-10z" fill-rule="evenodd"/>
+    <path d="m799.9 699.86-4.9 10v2.5h6v2.5h2.5v-2.5h1.5v-2.5h-1.5v-5h-2.5v5h-3.4l4.9-10z"/>
+    <path d="m788.5 704.86v2.5h-2.5v2.5h2.5v2.5h2.5v-2.5h2.5v-2.5h-2.5v-2.5z" fill-rule="evenodd"/>
+    <path d="m820.1 774.86 4.9-10v-2.5h-6v-2.5h-2.5v2.5h-1.5v2.5h1.5v5h2.5v-5h3.4l-4.9 10z"/>
+    <path d="m831.5 769.86v-2.5h2.5v-2.5h-2.5v-2.5h-2.5v2.5h-2.5v2.5h2.5v2.5z" fill-rule="evenodd"/>
+   </g>
+   <g transform="translate(120 430)" fill-rule="evenodd">
+    <rect transform="matrix(1 0 -.27472 .96152 0 0)" x="762.46" y="306.66" width="15" height="23.4" rx="2.5" ry="2.3478" fill="#fff" stroke="#000" stroke-width=".50991"/>
+    <rect transform="matrix(1 0 -.27472 .96152 0 0)" x="764.96" y="309.26" width="10" height="18.2" rx="2.5" ry="2.3478" fill="#f55"/>
+   </g>
+   <g transform="translate(130 422.5)" fill-rule="evenodd">
+    <rect transform="matrix(1 0 -.27472 .96152 0 0)" x="762.46" y="306.66" width="15" height="23.4" rx="2.5" ry="2.3478" fill="#fff" stroke="#000" stroke-width=".50991"/>
+    <rect transform="matrix(1 0 -.27472 .96152 0 0)" x="764.96" y="309.26" width="10" height="18.2" rx="2.5" ry="2.3478" fill="#55f"/>
+   </g>
+   <g transform="translate(127.5 437.5)" fill-rule="evenodd">
+    <rect transform="matrix(1 0 -.27472 .96152 0 0)" x="762.46" y="306.66" width="15" height="23.4" rx="2.5" ry="2.3478" fill="#fff" stroke="#000" stroke-width=".50991"/>
+    <rect transform="matrix(1 0 -.27472 .96152 0 0)" x="764.96" y="309.26" width="10" height="18.2" rx="2.5" ry="2.3478" fill="#fa0"/>
+   </g>
+   <g transform="translate(137.5 430)" fill-rule="evenodd">
+    <rect transform="matrix(1 0 -.27472 .96152 0 0)" x="762.46" y="306.66" width="15" height="23.4" rx="2.5" ry="2.3478" fill="#fff" stroke="#000" stroke-width=".50991"/>
+    <rect transform="matrix(1 0 -.27472 .96152 0 0)" x="764.96" y="309.26" width="10" height="18.2" rx="2.5" ry="2.3478" fill="#5a5"/>
+   </g>
+  </g>
+ </g>
+</svg>

@@ -46,10 +46,10 @@
 <body>
 
   <!-- Modal -->
-  <div class="modal fade" id="clientConnexionContainer" data-backdrop="static" tabindex="-1" role="dialog"
+  <div class="modal fade bg-light" id="clientConnexionContainer" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
+      <div class="modal-content shadow-lg">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalCenterTitle">Connexion</h5>
         </div>
@@ -67,8 +67,9 @@
                 <div class="input-group-prepend">
                   <div class="input-group-text">#</div>
                 </div>
-                <input type="text" class="form-control" :class="roomClass" id="inputRoom" placeholder="Room" data-toggle="tooltip"
-                  data-placement="bottom" title="Suite de 6 caractères [ 0-9 | a-Z ]." v-model:value="room">
+                <input type="text" class="form-control" :class="roomClass" id="inputRoom" placeholder="Room"
+                  data-toggle="tooltip" data-placement="bottom" title="Suite de 6 caractères [ 0-9 | a-Z ]."
+                  v-model:value="room">
               </div>
             </div>
           </form>
@@ -96,26 +97,29 @@
       <ul class="nav navbar-nav flex-row ml-auto">
         <li class="justify-content-center align-self-center mr-2"><span class="text-muted">#{{ room }}</span></li>
         <li class="justify-content-center align-self-center mr-2">
-          <!--<button @mouseover="mouseOver" @click="copyToClipboard" data-toggle="tooltip" data-placement="bottom" title="Copier le lien"
-            type="button" class="btn btn btn-light" id="btnCopyRoomToClipBoard">
-            #{{ room }} 
-          </button>-->
-          
           <div class="input-group">
-            <input class="border rounded-left pl-1" type="text" id="roomLinkToClipboard" v-model:value="roomLink"> <!-- génère le lien pour le copier -->
+            <input class="border rounded-left pl-1" type="text" id="roomLinkToClipboard" v-model:value="roomLink">
+            <!-- génère le lien pour le copier -->
             <div class="input-group-append">
-              <button class="btn btn-secondary px-2 p-1" @click="copyToClipboard" type="button" data-toggle="tooltip" data-placement="bottom" title="Copier le lien">
-                <svg class="bi bi-link-45deg" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M4.715 6.542L3.343 7.914a3 3 0 104.243 4.243l1.828-1.829A3 3 0 008.586 5.5L8 6.086a1.001 1.001 0 00-.154.199 2 2 0 01.861 3.337L6.88 11.45a2 2 0 11-2.83-2.83l.793-.792a4.018 4.018 0 01-.128-1.287z"/>
-                  <path d="M5.712 6.96l.167-.167a1.99 1.99 0 01.896-.518 1.99 1.99 0 01.518-.896l.167-.167A3.004 3.004 0 006 5.499c-.22.46-.316.963-.288 1.46z"/>
-                  <path d="M6.586 4.672A3 3 0 007.414 9.5l.775-.776a2 2 0 01-.896-3.346L9.12 3.55a2 2 0 012.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 00-4.243-4.243L6.586 4.672z"/>
-                  <path d="M10 9.5a2.99 2.99 0 00.288-1.46l-.167.167a1.99 1.99 0 01-.896.518 1.99 1.99 0 01-.518.896l-.167.167A3.004 3.004 0 0010 9.501z"/>
+              <button class="btn btn-secondary px-2 p-1" @click="copyToClipboard" type="button" data-toggle="tooltip"
+                data-placement="bottom" title="Copier le lien">
+                <svg class="bi bi-link-45deg" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M4.715 6.542L3.343 7.914a3 3 0 104.243 4.243l1.828-1.829A3 3 0 008.586 5.5L8 6.086a1.001 1.001 0 00-.154.199 2 2 0 01.861 3.337L6.88 11.45a2 2 0 11-2.83-2.83l.793-.792a4.018 4.018 0 01-.128-1.287z" />
+                  <path
+                    d="M5.712 6.96l.167-.167a1.99 1.99 0 01.896-.518 1.99 1.99 0 01.518-.896l.167-.167A3.004 3.004 0 006 5.499c-.22.46-.316.963-.288 1.46z" />
+                  <path
+                    d="M6.586 4.672A3 3 0 007.414 9.5l.775-.776a2 2 0 01-.896-3.346L9.12 3.55a2 2 0 012.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 00-4.243-4.243L6.586 4.672z" />
+                  <path
+                    d="M10 9.5a2.99 2.99 0 00.288-1.46l-.167.167a1.99 1.99 0 01-.896.518 1.99 1.99 0 01-.518.896l-.167.167A3.004 3.004 0 0010 9.501z" />
                 </svg>
               </button>
             </div>
           </div>
         </li>
-        <li class="justify-content-center align-self-center" v-if="show.StartButton"><button type="button" class="btn btn btn-success">
+        <li class="justify-content-center align-self-center" v-if="show.StartButton">
+          <button type="button" class="btn btn btn-success" @click="startGame">
             <div class="spinner-grow spinner-grow-sm align-middle mr-1" role="status">
               <span class="sr-only">En attente du lancement de la partie</span>
             </div>Lancer la partie
@@ -127,13 +131,70 @@
 
 
     <div class="tab-pane fade show active" id="nav-jeu" role="tabpanel" aria-labelledby="nav-home-jeu">
-      <div class="container-fluid">
+      <div class="d-flex justify-content-center">
+        <ul class="list-group list-group-horizontal-lg">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            a
+            <span class="badge badge-primary badge-pill">14</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            b
+            <span class="badge badge-primary badge-pill">2</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            c
+            <span class="badge badge-primary badge-pill">1</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-center">
+          <ul class="list-group list-group-vertical-lg">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              a
+              <span class="badge badge-primary badge-pill">14</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              b
+              <span class="badge badge-primary badge-pill">2</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              c
+              <span class="badge badge-primary badge-pill">1</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card m-0 border-0 bg-transparent" data-toggle="tooltip"
+          title="0 Rouge" style="height: 100px">
+          <img src="/images/cards/0red.svg" class="card-img-top" alt="0 Rouge">
+        </div>
+
+        <div class="d-flex justify-content-center">
+          <ul class="list-group list-group-vertical-lg">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              a
+              <span class="badge badge-primary badge-pill">14</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              b
+              <span class="badge badge-primary badge-pill">2</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              c
+              <span class="badge badge-primary badge-pill">1</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!--<div class="container-fluid">
         <div class="row">
           <div class="col-sm">
             <div id="handList" v-if="showCards" class="fixed-bottom">
               <div class="d-flex justify-content-center align-items-center w-75 mx-auto mb-2">
                 <div class="card-deck">
-                  <div class="card m-0 border-0" v-for="(card, index) in orderedCardList" data-toggle="tooltip"
+                  <div class="card m-0 border-0 bg-transparent" v-for="(card, index) in cardList" data-toggle="tooltip"
                     :title="card.fullName" @click="test(index)">
                     <img :src="card.imgSrc" class="card-img-top" :alt="card.fullName">
                   </div>
@@ -142,13 +203,14 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>-->
+
     </div>
 
 
     <div class="tab-pane fade" id="nav-chat" role="tabpanel" aria-labelledby="nav-chat-tab">
       <div class="container mt-3">
-        <div id="chat" class="border rounded p-3 m-auto">
+        <div id="chat" class="border rounded p-3 m-auto shadow">
           <div class="border rounded text-wrap" style="height: 50vh; width: 100%; overflow-x: hidden; overflow-y: auto;"
             v-chat-scroll="{always: false, smooth: true}">
             <ul class="list-group">
@@ -170,14 +232,15 @@
               <input type="text" class="form-control" placeholder="Votre message" aria-label="Recipient's username"
                 aria-describedby="button-addon2" v-model:value="inputMessage">
 
-                
+
 
               <div class="input-group-append">
                 <button class="btn btn-primary rounded-right" type="submit" id="button-addon2">Envoyer</button>
               </div>
 
 
-              <span class="input-group-text border-0" style="background: transparent;">{{inputLength}} / 300</span>
+              <span class="input-group-text border-0" style="background: transparent;">{{inputLength}} /
+                300</span>
             </div>
           </form>
         </div>
@@ -193,9 +256,11 @@
               <div class="custom-control custom-switch">
                 <input class="custom-control-input" type="checkbox" id="activateCheat">
                 <label class="custom-control-label" for="activateCheat">
-                  <div class="badge badge-warning p-1" style="font-size: 1em;">Non disponible</div> Autoriser la triche
+                  <div class="badge badge-warning p-1" style="font-size: 1em;">Non disponible</div> Autoriser la
+                  triche
                   <p class="text-muted">
-                    Autorise les joueurs à placer la carte qu'ils veulent pendant leur tour, si un joueur est suspecté
+                    Autorise les joueurs à placer la carte qu'ils veulent pendant leur tour, si un joueur est
+                    suspecté
                     de triche vous pouvez faire un vote pour qu'il pioche une carte.
                   </p>
                 </label>
@@ -205,8 +270,10 @@
                 <label class="custom-control-label" for="vocalMode">
                   <div class="badge badge-warning p-1" style="font-size: 1em;">Non disponible</div> Mode vocal
                   <p class="text-muted">
-                    Lorsque le joueur est sur le point d'avoir qu'une seule carte restante il doit dire UNO, s'il oublie
-                    ou qu'un contre uno a été fait un vote pourra être effectué contre lui pour qu'il tire une carte.
+                    Lorsque le joueur est sur le point d'avoir qu'une seule carte restante il doit dire UNO, s'il
+                    oublie
+                    ou qu'un contre uno a été fait un vote pourra être effectué contre lui pour qu'il tire une
+                    carte.
                   </p>
                 </label>
               </div>
@@ -234,8 +301,10 @@
                     :aria-labelledby="'heading'+index" data-parent="#playerManagerList">
                     <div class="card-body">
                       <button @click="kick(joueur)" type="button" class="btn btn-danger mx-2">Kick</button>
-                      <button v-if="_.includes(mutedList, joueur)" @click="mute(joueur)" type="button" class="btn btn-outline-dark mx-2">Démute du chat</button>
-                      <button v-else @click="mute(joueur)" type="button" class="btn btn-dark mx-2">Mute du chat</button>
+                      <button v-if="_.includes(mutedList, joueur)" @click="mute(joueur)" type="button"
+                        class="btn btn-outline-dark mx-2">Démute du chat</button>
+                      <button v-else @click="mute(joueur)" type="button" class="btn btn-dark mx-2">Mute du
+                        chat</button>
                     </div>
                   </div>
 
@@ -251,7 +320,6 @@
     </ul>
   </div>
   </div>
-
   <style>
     body {
       font-family: 'Nunito', sans-serif !important;
@@ -307,11 +375,13 @@
   <script src="/socket.io/socket.io.js"></script>
   <script type="text/javascript">
     class Card {
-      constructor(number, family, fullName) {
+      constructor(number, family, fullName, special = false, type) {
         this.number = number;
         this.family = family;
         this.fullName = fullName;
         this.imgSrc = "/images/cards/" + number + family + ".svg";
+        this.special = special;
+        this.type = type;
       }
     }
 
@@ -336,7 +406,8 @@
       methods: {
         addMessage: function (sender, message, style) {
           let currentDate = new Date();
-          let date = ("0" + currentDate.getHours()).slice(-2) + ":" + ("0" + currentDate.getMinutes()).slice(-2) +
+          let date = ("0" + currentDate.getHours()).slice(-2) + ":" + ("0" + currentDate.getMinutes()).slice(-
+              2) +
             ":" + ("0" + currentDate.getSeconds()).slice(-2);
           this.history.push({
             "sender": sender,
@@ -357,7 +428,7 @@
         }
       },
       watch: {
-        inputMessage: function() {
+        inputMessage: function () {
           this.inputLength = this.inputMessage.length;
         }
       }
@@ -375,7 +446,8 @@
       },
       computed: {
         playerListWithoutAdmin: function () {
-          return _.drop(this.playerList); //Retourne une liste sans le premier joueur qui est l'admin de la partie
+          return _.drop(this
+            .playerList); //Retourne une liste sans le premier joueur qui est l'admin de la partie
         }
       },
       methods: {
@@ -425,10 +497,14 @@
           $('#roomLinkToClipboard').select();
           document.execCommand('copy');
         },
-        mouseOver: function(){
-            this.show.linkVisibility = !this.show.linkVisibility;
+        mouseOver: function () {
+          this.show.linkVisibility = !this.show.linkVisibility;
+        },
+        startGame: function () {
+          socket.emit('start-game');
         }
-      }, computed: {
+      },
+      computed: {
         roomLink: function () {
           return window.origin + "/room/" + this.room;
         }
@@ -482,14 +558,14 @@
         })
       },
       watch: {
-        pseudo: function() { //vérifie si l'input pseudo est valide du côté client
+        pseudo: function () { //vérifie si l'input pseudo est valide du côté client
           if (this.pseudo.length >= 3 && this.pseudo.length <= 20) {
             this.pseudoClass = "is-valid";
           } else {
             this.pseudoClass = "is-invalid";
           }
         },
-        room: function() {
+        room: function () {
           if (this.room.length == 6) {
             this.roomClass = "is-valid";
           } else {
@@ -503,12 +579,13 @@
       el: '#handList',
       data: {
         cardList: [zeroRed, zeroRed, zeroRed, zeroRed,
-        zeroRed], //zeroRed, oneRed, twoRed, threeRed, fourRed, oneRed
+          zeroRed
+        ], //zeroRed, oneRed, twoRed, threeRed, fourRed, oneRed
         showCards: true
       },
       methods: {
-        test: function (element) {
-          console.log(element.fullName);
+        test: function (index) {
+          console.log(this.cardList[index].fullName);
         },
         setupCards: function (list) {
           this.cardList = list;
@@ -587,7 +664,6 @@
     $(function () {
       $('[data-toggle="tooltip"]').tooltip();
     });
-
   </script>
 </body>
 
